@@ -73,39 +73,58 @@ void Unit::showStatus(){
 }
 
 void Unit::newTurn(){
-	guard_on = false; 
+    guard_on = false; 
+    dodge_on = false;
 }
 
 int Unit::beAttacked(int oppatk){
-	int dmg;
-	if(oppatk > def){
-		dmg = oppatk-def;	
-		if(guard_on) dmg = dmg/3;
-	}	
-	hp -= dmg;
-	if(hp <= 0){hp = 0;}
-	
-	return dmg;	
+    int dmg;
+    if(dodge_on){
+        if(rand() % 2 == 0){
+            dmg = 0;
+        } else {
+            dmg = (oppatk > def) ? (oppatk - def) * 2 : 0;
+        }
+    } else {
+        if(oppatk > def){
+            dmg = oppatk - def;	
+            if(guard_on) dmg = dmg / 3;
+        } else {
+            dmg = 0;
+        }
+    }
+    hp -= dmg;
+    if(hp <= 0){hp = 0;}
+    
+    return dmg;	
 }
 
 int Unit::attack(Unit &opp){
-	return opp.beAttacked(atk);
+    return opp.beAttacked(atk);
+}
+
+int Unit::ultimateAttack(Unit &opp){
+    return opp.beAttacked(atk * 2);
 }
 
 int Unit::heal(){
-	int h = rand()%21 + 10;
-	if(hp + h > hpmax) h = hpmax - hp;
-	hp = hp + h;
-	return h;
+    int h = rand()%21 + 10;
+    if(hp + h > hpmax) h = hpmax - hp;
+    hp = hp + h;
+    return h;
 }
 
 void Unit::guard(){
-	guard_on = true;
-}	
+    guard_on = true;
+}
+
+void Unit::dodge(){
+    dodge_on = true;
+}
 
 bool Unit::isDead(){
-	if(hp <= 0) return true;
-	else return false;
+    if(hp <= 0) return true;
+    else return false;
 }
 
 void drawScene(char p_action,int p,char m_action,int m){
